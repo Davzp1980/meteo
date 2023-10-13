@@ -34,6 +34,8 @@ func main() {
 	router.HandleFunc("/object", handler.GetDataByObject(db)).Methods("POST")
 	router.HandleFunc("/temp", handler.GetDataByTemp(db)).Methods("POST")
 	router.HandleFunc("/pres", handler.GetDataByPressure(db)).Methods("POST")
+	router.HandleFunc("/hum", handler.GetDataByHumidity(db)).Methods("POST")
+	router.HandleFunc("/date", handler.GetDataByDate(db)).Methods("POST")
 
 	log.Fatal(http.ListenAndServe(":8000", router))
 

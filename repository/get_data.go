@@ -2,7 +2,6 @@ package repository
 
 import (
 	"database/sql"
-	"fmt"
 	"log"
 	"meteo/internal"
 )
@@ -38,8 +37,7 @@ func GetDataByTemp(db *sql.DB, object string) ([]internal.Data, error) {
 		log.Println("GetDataByTemp", err)
 		return dataByTemp, err
 	}
-	fmt.Println(rows)
-	fmt.Println("rows")
+
 	for rows.Next() {
 		var d internal.Data
 
@@ -57,7 +55,7 @@ func GetDataByTemp(db *sql.DB, object string) ([]internal.Data, error) {
 func GetDataByPressure(db *sql.DB, object string) ([]internal.Data, error) {
 	dataByPressure := []internal.Data{}
 
-	rows, err := db.Query("SELECT * from data WHERE object=$1 ORDER BY pressure")
+	rows, err := db.Query("SELECT * from data WHERE object=$1 ORDER BY pressure", object)
 	if err != nil {
 		log.Println("GetDataByPressure", err)
 		return dataByPressure, err
@@ -80,7 +78,7 @@ func GetDataByPressure(db *sql.DB, object string) ([]internal.Data, error) {
 func GetDataByHumidity(db *sql.DB, object string) ([]internal.Data, error) {
 	dataByHumidity := []internal.Data{}
 
-	rows, err := db.Query("SELECT * from data WHERE object=$1 ORDER BY humidity")
+	rows, err := db.Query("SELECT * from data WHERE object=$1 ORDER BY humidity", object)
 	if err != nil {
 		log.Println("GetDataByPressure", err)
 		return dataByHumidity, err
@@ -103,7 +101,7 @@ func GetDataByHumidity(db *sql.DB, object string) ([]internal.Data, error) {
 func GetDataByDate(db *sql.DB, object string) ([]internal.Data, error) {
 	dataByDate := []internal.Data{}
 
-	rows, err := db.Query("SELECT * from data WHERE object=$1 ORDER BY date")
+	rows, err := db.Query("SELECT * from data WHERE object=$1 ORDER BY date", object)
 	if err != nil {
 		log.Println("GetDataByDate", err)
 		return dataByDate, err

@@ -33,7 +33,7 @@ func GetDataByTemp(db *sql.DB) http.HandlerFunc {
 
 		json.NewDecoder(r.Body).Decode(&input)
 
-		data, err := repository.GetDataByObject(db, input.Object)
+		data, err := repository.GetDataByTemp(db, input.Object)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
@@ -52,7 +52,45 @@ func GetDataByPressure(db *sql.DB) http.HandlerFunc {
 
 		json.NewDecoder(r.Body).Decode(&input)
 
-		data, err := repository.GetDataByObject(db, input.Object)
+		data, err := repository.GetDataByPressure(db, input.Object)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
+		w.WriteHeader(http.StatusOK)
+
+		json.NewEncoder(w).Encode(data)
+
+	}
+}
+
+func GetDataByHumidity(db *sql.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var input internal.Data
+
+		json.NewDecoder(r.Body).Decode(&input)
+
+		data, err := repository.GetDataByHumidity(db, input.Object)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
+		w.WriteHeader(http.StatusOK)
+
+		json.NewEncoder(w).Encode(data)
+
+	}
+}
+
+func GetDataByDate(db *sql.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var input internal.Data
+
+		json.NewDecoder(r.Body).Decode(&input)
+
+		data, err := repository.GetDataByDate(db, input.Object)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
