@@ -13,7 +13,7 @@ func GetDataByObject(db *sql.DB) http.HandlerFunc {
 		var input internal.Data
 
 		json.NewDecoder(r.Body).Decode(&input)
-
+		//object := r.URL.Query().Get("object")
 		data, err := repository.GetDataByObject(db, input.Object)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)

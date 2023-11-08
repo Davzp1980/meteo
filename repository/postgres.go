@@ -20,7 +20,7 @@ func MigrateDB(db *sql.DB) error {
 			temperetura real NOT NULL,
 			humidity integer NOT NULL,
 			pressure integer NOT NULL,
-			date TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+			date TIMESTAMP(0) DEFAULT CURRENT_TIMESTAMP(0)
 		);
 `
 	_, err := db.Exec(CreateTablesQuery)

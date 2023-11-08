@@ -20,7 +20,7 @@ func AddData(db *sql.DB) http.HandlerFunc {
 			return
 		}
 		w.WriteHeader(http.StatusOK)
-
+		w.Write([]byte("get ok"))
 		json.NewEncoder(w).Encode("Data added")
 	}
 }

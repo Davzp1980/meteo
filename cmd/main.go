@@ -6,7 +6,9 @@ import (
 	"net/http"
 	"os"
 
+	"meteo/cors"
 	"meteo/handler"
+
 	"meteo/repository"
 
 	"github.com/gorilla/mux"
@@ -24,19 +26,26 @@ func main() {
 	repository.MigrateDB(db)
 
 	router := mux.NewRouter()
-	router.Use(handler.UserIdentification)
+	router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+	})
 
-	router.HandleFunc("/sign-in", handler.SignIn(db))
-	router.HandleFunc("/create-user", handler.CreateUser(db))
+	//router.Use(handler.UserIdentification)
+
+	router.HandleFunc("/sign-in", handler.SignIn(db)).Methods("POST")
+	router.HandleFunc("/create-user", handler.CreateUser(db)).Methods("POST")
 
 	router.HandleFunc("/add-data", handler.AddData(db))
 
-	router.HandleFunc("/object", handler.GetDataByObject(db)).Methods("POST")
-	router.HandleFunc("/temp", handler.GetDataByTemp(db)).Methods("POST")
-	router.HandleFunc("/pres", handler.GetDataByPressure(db)).Methods("POST")
-	router.HandleFunc("/hum", handler.GetDataByHumidity(db)).Methods("POST")
-	router.HandleFunc("/date", handler.GetDataByDate(db)).Methods("POST")
+	router.HandleFunc("/object", handler.GetDataByObject(db)).Methods("GET")
+	router.HandleFunc("/temp", handler.GetDataByTemp(db)).Methods("GET")
+	router.HandleFunc("/pres", handler.GetDataByPressure(db)).Methods("GET")
+	router.HandleFunc("/hum", handler.GetDataByHumidity(db)).Methods("GET")
+	router.HandleFunc("/date", handler.GetDataByDate(db)).Methods("GET")
 
-	log.Fatal(http.ListenAndServe(":8000", router))
+	corsSettings := cors.CorsSettings()
+	handler := corsSettings.Handler(router)
+
+	log.Fatal(http.ListenAndServe(":8000", handler))
 
 }
