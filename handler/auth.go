@@ -22,11 +22,10 @@ var Jwt_key = []byte("meteo_2023")
 
 func SignIn(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+
 		var input internal.User
 
 		json.NewDecoder(r.Body).Decode(&input)
-
-		//hashedPassword, _ := service.HashePassword(input.Password)
 
 		userName, hashedPassword, err := repository.GetUser(db, input.Name)
 		if err != nil {
@@ -62,6 +61,7 @@ func SignIn(db *sql.DB) http.HandlerFunc {
 		})
 
 		w.WriteHeader(http.StatusOK)
+
 		w.Write([]byte(fmt.Sprintf("User %s authorizated", userName)))
 	}
 }

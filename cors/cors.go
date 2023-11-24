@@ -18,6 +18,9 @@ func CorsSettings() *cors.Cors {
 		AllowCredentials: true,
 		AllowedHeaders: []string{
 			"Content-Type",
+			"Access-Control-Allow-Origin",
+			"*",
+			"200",
 		},
 		OptionsPassthrough: true,
 		ExposedHeaders:     []string{},
