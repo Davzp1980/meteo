@@ -3,7 +3,6 @@ package handler
 import (
 	"database/sql"
 	"encoding/json"
-	"fmt"
 	"meteo/internal"
 	"meteo/repository"
 	"net/http"
@@ -15,7 +14,7 @@ func GetDataByObject(db *sql.DB) http.HandlerFunc {
 
 		json.NewDecoder(r.Body).Decode(&input)
 		object := r.URL.Query().Get("object")
-		fmt.Println(object)
+
 		data, err := repository.GetDataByObject(db, object)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)

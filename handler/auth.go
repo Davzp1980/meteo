@@ -27,41 +27,61 @@ func SignIn(db *sql.DB) http.HandlerFunc {
 
 		json.NewDecoder(r.Body).Decode(&input)
 
-		userName, hashedPassword, err := repository.GetUser(db, input.Name)
-		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-			return
+		if r.Method == "POST" {
+			userName, hashedPassword, err := repository.GetUser(db, input.Name)
+			if err != nil {
+				w.WriteHeader(http.StatusBadRequest)
+				return
+			}
+			if !service.CheckPassword(input.Password, hashedPassword) || input.Name != userName {
+				w.Write([]byte("Wrong password or user name"))
+				return
+			}
+
+			expirationTime := time.Now().Add(5 * time.Minute)
+
+			claims := &Claims{
+				Username: userName,
+				RegisteredClaims: jwt.RegisteredClaims{
+					ExpiresAt: jwt.NewNumericDate(expirationTime),
+				},
+			}
+
+			token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+
+			signedToken, err := token.SignedString(Jwt_key)
+			if err != nil {
+				w.WriteHeader(http.StatusInternalServerError)
+				return
+			}
+
+			http.SetCookie(w, &http.Cookie{
+				Name:     "token",
+				Value:    signedToken,
+				Expires:  expirationTime,
+				HttpOnly: true,
+			})
+
+			w.WriteHeader(http.StatusOK)
+
+			w.Write([]byte(fmt.Sprintf("User %s authorizated", userName)))
 		}
-		if !service.CheckPassword(input.Password, hashedPassword) || input.Name != userName {
-			w.Write([]byte("Wrong password or user name"))
-			return
-		}
 
-		expirationTime := time.Now().Add(5 * time.Minute)
+	}
+}
 
-		claims := &Claims{
-			Username: userName,
-			RegisteredClaims: jwt.RegisteredClaims{
-				ExpiresAt: jwt.NewNumericDate(expirationTime),
-			},
-		}
-
-		token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-
-		signedToken, err := token.SignedString(Jwt_key)
-		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
-
+func Logout() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
 		http.SetCookie(w, &http.Cookie{
-			Name:    "token",
-			Value:   signedToken,
-			Expires: expirationTime,
+			Name:     "token",
+			Value:    "",
+			Expires:  time.Now().Add(-time.Hour),
+			HttpOnly: true,
 		})
 
 		w.WriteHeader(http.StatusOK)
 
-		w.Write([]byte(fmt.Sprintf("User %s authorizated", userName)))
+		w.Write([]byte(fmt.Sprint("User is logouted")))
 	}
+
 }

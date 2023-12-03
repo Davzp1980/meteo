@@ -15,13 +15,19 @@ func CreateUser(db *sql.DB) http.HandlerFunc {
 
 		json.NewDecoder(r.Body).Decode(&input)
 
-		id, err := service.CreateUser(db, input.Name, input.Password)
-		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-			return
-		}
-		w.WriteHeader(http.StatusOK)
-		json.NewEncoder(w).Encode(fmt.Sprintf("User created ID: %v, Name: %s", id, input.Name))
+		if r.Method == "POST" {
+			if input.Name == "" || input.Password == "" {
+				w.WriteHeader(http.StatusBadRequest)
+				return
+			}
+			id, err := service.CreateUser(db, input.Name, input.Password)
+			if err != nil {
+				w.WriteHeader(http.StatusBadRequest)
+				return
+			}
 
+			w.WriteHeader(http.StatusOK)
+			json.NewEncoder(w).Encode(fmt.Sprintf("User created ID: %v, Name: %s", id, input.Name))
+		}
 	}
 }

@@ -8,6 +8,7 @@ import (
 
 func CreateUser(db *sql.DB, username, hashedPassword string) (int, error) {
 	var user internal.User
+
 	err := db.QueryRow("INSERT INTO users(name, password_hash) VALUES ($1,$2) RETURNING id", username, hashedPassword).Scan(
 		&user.ID)
 

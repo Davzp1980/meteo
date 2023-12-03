@@ -30,14 +30,15 @@ func main() {
 		w.Header().Set("Content-Type", "application/json")
 	})
 
-	//router.Use(handler.UserIdentification)
+	router.Use(handler.UserIdentification)
 
-	router.HandleFunc("/sign-in", handler.SignIn(db)).Methods("POST")
-	router.HandleFunc("/create-user", handler.CreateUser(db)).Methods("POST")
+	router.HandleFunc("/sign-in", handler.SignIn(db))
+	router.HandleFunc("/create-user", handler.CreateUser(db))
+	router.HandleFunc("/logout", handler.Logout())
 
 	router.HandleFunc("/add-data", handler.AddData(db))
 
-	router.HandleFunc("/object", handler.GetDataByObject(db)).Methods("GET")
+	router.HandleFunc("/object", handler.GetDataByObject(db))
 	router.HandleFunc("/temp", handler.GetDataByTemp(db)).Methods("GET")
 	router.HandleFunc("/pres", handler.GetDataByPressure(db)).Methods("GET")
 	router.HandleFunc("/hum", handler.GetDataByHumidity(db)).Methods("GET")
