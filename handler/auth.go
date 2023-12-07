@@ -73,7 +73,7 @@ func SignIn(db *sql.DB) http.HandlerFunc {
 func Logout() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		http.SetCookie(w, &http.Cookie{
-			Name:     "token",
+			Name:     "",
 			Value:    "",
 			Expires:  time.Now().Add(-time.Hour),
 			HttpOnly: true,
